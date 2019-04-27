@@ -11,7 +11,8 @@
   ],
   "author": "David Harris",
   "scripts": {
-    "dev": "nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon server.js"
   },
   "license": "ISC",
   "dependencies": {
