@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { addNewPost } from '../actions';
 
-const PostForm = ({ addNewPost }) => {
+const CreatePost = ({ addNewPost, history }) => {
   // Using an object with old state syntax for easier updating
 
   const [formState, setFormState] = useState({
@@ -12,16 +12,16 @@ const PostForm = ({ addNewPost }) => {
     body: ''
   });
 
+  const formRef = useRef(null);
+
   const handleSubmit = e => {
     e.preventDefault();
 
-    if (
-      Object.keys(formState)
-        .map(key => formState[key])
-        .reduce((acc, cur) => acc && cur)
-    ) {
+    if (Object.values(formState).reduce((acc, cur) => acc && cur)) {
       console.log(formState);
       addNewPost(formState);
+      formRef.current.reset();
+      history.push('/');
     }
   };
 
@@ -38,7 +38,7 @@ const PostForm = ({ addNewPost }) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} ref={formRef}>
         <input
           type='text'
           name='title'
@@ -80,11 +80,9 @@ const PostForm = ({ addNewPost }) => {
   );
 };
 
-const mapStateToProps = state => ({});
-
 export default connect(
-  mapStateToProps,
+  null,
   {
     addNewPost
   }
-)(PostForm);
+)(CreatePost);
