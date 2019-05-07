@@ -5,7 +5,8 @@ import {
   DELETE_POST,
   REQUEST_POSTS,
   EDIT_POST_STARTER,
-  EDIT_POST
+  EDIT_POST,
+  UPDATE_POST_VOTE
 } from '../actions/types';
 
 const defaultPostsState = {
@@ -64,6 +65,16 @@ const posts = (state = defaultPostsState, action) => {
       return {
         ...state,
         isFetching: true
+      };
+
+    case UPDATE_POST_VOTE:
+      const { id } = action.post;
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          [id]: action.post
+        }
       };
 
     default:

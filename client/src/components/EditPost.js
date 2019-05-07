@@ -3,13 +3,16 @@ import { connect } from 'react-redux';
 
 import { editPost } from '../actions';
 
-const EditPost = ({ match, title, body, editPost, history }) => {
-  const [state, setState] = useState({ title, body });
+const EditPost = ({ match, editPost, history, items }) => {
+  const { title, body } = items[match.params.id];
+  const [state, setState] = useState({
+    title,
+    body
+  });
 
   const handleEditSubmit = e => {
     e.preventDefault();
-    console.log(match.params.id);
-    editPost(match.params.id, { ...state });
+    editPost(match.params.id, state);
     formRef.current.reset();
     history.push('/');
   };
@@ -25,6 +28,7 @@ const EditPost = ({ match, title, body, editPost, history }) => {
     <form onSubmit={handleEditSubmit} ref={formRef}>
       {Object.keys(state).map(field => (
         <input
+          key={field}
           type='text'
           name={field}
           placeholder={`Post ${field}`}
@@ -32,12 +36,17 @@ const EditPost = ({ match, title, body, editPost, history }) => {
           value={state[field]}
         />
       ))}
+      <button>Edit Post</button>
     </form>
   );
 };
 
+const mapStateToProps = ({ posts }) => ({
+  items: posts.items
+});
+
 export default connect(
-  null,
+  mapStateToProps,
   {
     editPost
   }
