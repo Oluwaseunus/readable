@@ -101,19 +101,18 @@ export const fetchAll = type => async dispatch => {
   getDispatcher(type, data, dispatch);
 };
 
-export const handleVote = (
-  voteType,
-  originType,
-  originId
-) => async dispatch => {
-  const response = await fetch(`/${originType}/${originId}`, {
-    method: 'POST',
-    body: JSON.stringify({ option: voteType }),
-    headers
-  });
-  const data = await response.json();
-  dispatch(updatePostVote(data));
-};
+export function handleVote(voteType, originType, originId) {
+  return async function(dispatch) {
+    const response = await fetch(`/${originType}/${originId}`, {
+      method: 'POST',
+      body: JSON.stringify({ option: voteType }),
+      headers
+    });
+
+    const data = await response.json();
+    dispatch(updatePostVote(data));
+  };
+}
 
 // Normal action creators
 
