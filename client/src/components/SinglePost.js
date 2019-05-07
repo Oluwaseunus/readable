@@ -1,9 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { handleVote } from '../actions';
 import { timeValue } from '../helpers';
 
 const SinglePost = props => {
   const handleDelete = () => {
     props.deletePost(props.id);
+  };
+
+  const sendVote = type => {
+    props.handleVote(type, 'posts', props.id);
   };
 
   return (
@@ -17,7 +24,11 @@ const SinglePost = props => {
         <p>{props.body}</p>
         <p>Category: {props.category}</p>
         <p>{timeValue(props.timestamp)}</p>
-        <p>{props.voteScore} votes</p>
+        <div>
+          <button onClick={() => sendVote('upVote')}>&uarr;</button>
+          <p>{props.voteScore} votes</p>
+          <button onClick={() => sendVote('downVote')}>&darr;</button>
+        </div>
         <p>{props.commentCount} comments</p>
         <button onClick={handleDelete}>Delete Post</button>
         <button onClick={() => props.history.push(`/editPost/${props.id}`)}>
@@ -28,4 +39,7 @@ const SinglePost = props => {
   );
 };
 
-export default SinglePost;
+export default connect(
+  null,
+  { handleVote }
+)(SinglePost);

@@ -7,7 +7,8 @@ import {
   ADD_NEW_POST_STARTER,
   DELETE_POST_STARTER,
   EDIT_POST_STARTER,
-  EDIT_POST
+  EDIT_POST,
+  UPDATE_POST_VOTE
 } from './types';
 
 const uuidv4 = require('uuid/v4');
@@ -79,18 +80,18 @@ export const deletePost = id => async dispatch => {
   dispatch(deletePostSuccess(id));
 };
 
-export const editPost = (id, title, body) => async dispatch => {
+export const editPost = (id, post) => async dispatch => {
   dispatch(editPostStarter(id));
 
   const response = await fetch(`/posts/${id}`, {
     method: 'PUT',
-    body: JSON.stringify({ title, body }),
+    body: JSON.stringify(post),
     headers
   });
 
   const data = await response.json();
   console.log(data);
-  dispatch(editPostSuccess(id, title, body));
+  dispatch(editPostSuccess());
 };
 
 export const fetchAll = type => async dispatch => {
@@ -98,6 +99,20 @@ export const fetchAll = type => async dispatch => {
   const data = await response.json();
   console.log(data);
   getDispatcher(type, data, dispatch);
+};
+
+export const handleVote = (
+  voteType,
+  originType,
+  originId
+) => async dispatch => {
+  const response = await fetch(`/${originType}/${originId}`, {
+    method: 'POST',
+    body: JSON.stringify({ option: voteType }),
+    headers
+  });
+  const data = await response.json();
+  dispatch(updatePostVote(data));
 };
 
 // Normal action creators
@@ -125,11 +140,8 @@ export const editPostStarter = id => ({
   id
 });
 
-export const editPostSuccess = (id, title, body) => ({
-  type: EDIT_POST,
-  id,
-  title,
-  body
+export const editPostSuccess = () => ({
+  type: EDIT_POST
 });
 
 export const receiveAllCategories = categories => ({
@@ -144,4 +156,9 @@ export const receiveAllPosts = posts => ({
 
 export const requestPosts = () => ({
   type: REQUEST_POSTS
+});
+
+export const updatePostVote = post => ({
+  type: UPDATE_POST_VOTE,
+  post
 });

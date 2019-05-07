@@ -18,7 +18,6 @@ const CreatePost = ({ addNewPost, history }) => {
     e.preventDefault();
 
     if (Object.values(formState).reduce((acc, cur) => acc && cur)) {
-      console.log(formState);
       addNewPost(formState);
       formRef.current.reset();
       history.push('/');
@@ -27,7 +26,6 @@ const CreatePost = ({ addNewPost, history }) => {
 
   const handleChange = e => {
     const { name, value } = e.target;
-    console.log(name, value);
     setFormState({
       ...formState,
       [name]: value
