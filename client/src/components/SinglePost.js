@@ -1,10 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { handleVote } from '../actions';
+import CommentForm from './CommentForm';
+
+import { handleVote, addNewComment } from '../actions';
 import { timeValue } from '../helpers';
 
 const SinglePost = props => {
+  const [showComments, setShowComments] = React.useState(false);
+
   const handleDelete = () => {
     props.deletePost(props.id);
   };
@@ -12,6 +16,8 @@ const SinglePost = props => {
   const sendVote = type => {
     props.handleVote(type, 'posts', props.id);
   };
+
+  const comments = props.allComments[props.id];
 
   return (
     <div key={props.id}>
@@ -29,17 +35,32 @@ const SinglePost = props => {
           <p>{props.voteScore} votes</p>
           <button onClick={() => sendVote('downVote')}>&darr;</button>
         </div>
-        <p>{props.commentCount} comments</p>
+        <p onClick={() => setShowComments(!showComments)}>
+          {props.commentCount} comments
+        </p>
+        <div>
+          {showComments &&
+            comments.map(comment => (
+              <div key={comment.id}>
+                {`${comment.author}:`} {comment.body}
+              </div>
+            ))}
+        </div>
         <button onClick={handleDelete}>Delete Post</button>
         <button onClick={() => props.history.push(`/editPost/${props.id}`)}>
           Edit Post
         </button>
+        <CommentForm addNewComment={props.addNewComment} id={props.id} />
       </div>
     </div>
   );
 };
 
+const mapStateToProps = state => ({
+  allComments: state.comments
+});
+
 export default connect(
-  null,
-  { handleVote }
+  mapStateToProps,
+  { addNewComment, handleVote }
 )(SinglePost);

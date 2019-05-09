@@ -2,15 +2,27 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { fetchAll, deletePost } from '../actions';
+import { fetchAll, deletePost, fetchPostComments } from '../actions';
 import SinglePost from './SinglePost';
 
-const Posts = ({ posts, deletePost, fetchAll, match, history }) => {
+const Posts = props => {
+  const {
+    posts,
+    deletePost,
+    fetchAll,
+    fetchPostComments,
+    match,
+    history
+  } = props;
+
   useEffect(() => {
     fetchAll('posts');
   }, [fetchAll]);
 
   const { items } = posts;
+  console.log(items);
+
+  Object.keys(items).map(fetchPostComments);
 
   return (
     <div>
@@ -45,6 +57,7 @@ export default connect(
   mapStateToProps,
   {
     fetchAll,
+    fetchPostComments,
     deletePost
   }
 )(Posts);

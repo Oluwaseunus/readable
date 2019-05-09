@@ -1,7 +1,6 @@
 import {
   RECEIVE_ALL_POSTS,
-  ADD_NEW_POST,
-  ADD_NEW_POST_STARTER,
+  ADD_POST,
   DELETE_POST,
   REQUEST_POSTS,
   EDIT_POST_STARTER,
@@ -16,11 +15,7 @@ const defaultPostsState = {
 
 const posts = (state = defaultPostsState, action) => {
   switch (action.type) {
-    case ADD_NEW_POST_STARTER:
-      console.log('About to add a new post');
-      return state;
-
-    case ADD_NEW_POST:
+    case ADD_POST:
       console.log('adding new post', action.post);
       return {
         ...state,
@@ -54,8 +49,6 @@ const posts = (state = defaultPostsState, action) => {
       return state;
 
     case RECEIVE_ALL_POSTS:
-      console.log(action.posts);
-
       return {
         isFetching: false,
         items: { ...action.posts }
