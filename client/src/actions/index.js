@@ -1,13 +1,14 @@
 import {
-  ADD_NEW_POST,
+  ADD_COMMENT,
+  ADD_POST,
   DELETE_POST,
+  DELETE_POST_STARTER,
+  EDIT_POST,
+  EDIT_POST_STARTER,
   RECEIVE_ALL_POSTS,
   RECEIVE_ALL_CATEGORIES,
+  RECEIVE_COMMENTS,
   REQUEST_POSTS,
-  ADD_NEW_POST_STARTER,
-  DELETE_POST_STARTER,
-  EDIT_POST_STARTER,
-  EDIT_POST,
   UPDATE_POST_VOTE
 } from './types';
 
@@ -30,7 +31,6 @@ const headers = {
 const getDispatcher = (type, data, dispatch) => {
   switch (type) {
     case 'posts':
-      console.log(data);
       dispatch(receiveAllPosts(data));
       break;
     case 'categories':
@@ -48,8 +48,6 @@ const getDispatcher = (type, data, dispatch) => {
  */
 
 export const addNewPost = postData => async dispatch => {
-  dispatch(addPostStarter());
-
   const fetchBody = {
     id: uuidv4(),
     timestamp: Date.now(),
@@ -64,6 +62,24 @@ export const addNewPost = postData => async dispatch => {
 
   const data = await response.json();
   dispatch(addPost(data));
+};
+
+export const addNewComment = (commentData, id) => async dispatch => {
+  const commentBody = {
+    id: uuidv4(),
+    timestamp: Date.now(),
+    parentId: id,
+    ...commentData
+  };
+
+  const response = await fetch('/comments', {
+    method: 'POST',
+    body: JSON.stringify(commentBody),
+    headers
+  });
+
+  const data = await response.json();
+  dispatch(addComment(data));
 };
 
 export const deletePost = id => async dispatch => {
@@ -97,8 +113,15 @@ export const editPost = (id, post) => async dispatch => {
 export const fetchAll = type => async dispatch => {
   const response = await fetch(`/${type}`, { headers });
   const data = await response.json();
-  console.log(data);
   getDispatcher(type, data, dispatch);
+};
+
+export const fetchPostComments = id => async dispatch => {
+  console.log('fetching comments!', id);
+  const response = await fetch(`/posts/${id}/comments`, { headers });
+  const data = await response.json();
+  console.log(data);
+  dispatch(receiveComments(data, id));
 };
 
 export function handleVote(voteType, originType, originId) {
@@ -116,13 +139,14 @@ export function handleVote(voteType, originType, originId) {
 
 // Normal action creators
 
-export const addPost = post => ({
-  type: ADD_NEW_POST,
-  post
+const addComment = data => ({
+  type: ADD_COMMENT,
+  data
 });
 
-export const addPostStarter = () => ({
-  type: ADD_NEW_POST_STARTER
+export const addPost = post => ({
+  type: ADD_POST,
+  post
 });
 
 export const deletePostSuccess = id => ({
@@ -141,6 +165,12 @@ export const editPostStarter = id => ({
 
 export const editPostSuccess = () => ({
   type: EDIT_POST
+});
+
+export const receiveComments = (data, id) => ({
+  type: RECEIVE_COMMENTS,
+  data,
+  id
 });
 
 export const receiveAllCategories = categories => ({
